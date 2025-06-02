@@ -1,28 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Popup Chain</title>
+  <title>Single Popup Reuse</title>
   <script>
-    function openPopup(step) {
-      if (step > 6) return;
-      const popup = window.open('', `popup${step}`, 'width=400,height=300');
-      if (popup) {
-        popup.document.write(`
-          <html>
-            <head><title>Popup ${step}</title></head>
-            <body>
-              <h2>This is Popup Window ${step}</h2>
-              ${step < 6 ? `<button onclick="window.opener.openPopup(${step + 1})">Open Next Popup</button>` : '<p>This is the final popup.</p>'}
-            </body>
-          </html>
-        `);
-        popup.document.close();
-      }
+    function openPopup() {
+      window.open('popup.html', '_blank', 'width=400,height=300');
     }
   </script>
 </head>
 <body>
-  <h1>Chained Popups</h1>
-  <button onclick="openPopup(1)">Start Popup Chain</button>
+  <h1>Single Popup Reuse</h1>
+  <button onclick="openPopup()">Open Popup</button>
 </body>
 </html>
