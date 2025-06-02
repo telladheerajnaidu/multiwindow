@@ -1,72 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chained Popups for Automation Testing</title>
+  <title>Popup Chain</title>
   <script>
     function openPopup(step) {
-      const nextStep = step + 1;
-      const isFinal = step >= 6;
-
+      if (step > 6) return;
       const popup = window.open('', `popup${step}`, 'width=400,height=300');
-
       if (popup) {
         popup.document.write(`
           <html>
             <head><title>Popup ${step}</title></head>
             <body>
               <h2>This is Popup Window ${step}</h2>
-              <div id="button-container">
-                <p>Loading next button...</p>
-              </div>
-
-              <script>
-                function openPopup(step) {
-                  const nextStep = step + 1;
-                  const isFinal = step >= 6;
-                  const popup = window.open('', 'popup' + step, 'width=400,height=300');
-                  if (popup) {
-                    popup.document.write(\`
-                      <html>
-                        <head><title>Popup \${step}</title></head>
-                        <body>
-                          <h2>This is Popup Window \${step}</h2>
-                          <div id="button-container">
-                            <p>Loading next button...</p>
-                          </div>
-                          <script>
-                            function openPopup(step) {
-                              const nextStep = step + 1;
-                              const isFinal = step >= 6;
-                              const popup = window.open('', 'popup' + step, 'width=400,height=300');
-                              // Recursion logic repeats
-                            }
-                            setTimeout(() => {
-                              const container = document.getElementById('button-container');
-                              if (!isFinal) {
-                                container.innerHTML = '<button id="popupButton">Open Popup</button>';
-                                document.getElementById('popupButton').onclick = () => openPopup(\${nextStep});
-                              } else {
-                                container.innerHTML = '<p>This is the final popup.</p>';
-                              }
-                            }, 2000);
-                          <\/script>
-                        </body>
-                      </html>
-                    \`);
-                    popup.document.close();
-                  }
-                }
-
-                setTimeout(() => {
-                  const container = document.getElementById('button-container');
-                  if (!isFinal) {
-                    container.innerHTML = '<button id="popupButton">Open Popup</button>';
-                    document.getElementById('popupButton').onclick = () => openPopup(${nextStep});
-                  } else {
-                    container.innerHTML = '<p>This is the final popup.</p>';
-                  }
-                }, 2000);
-              <\/script>
+              ${step < 6 ? `<button onclick="window.opener.openPopup(${step + 1})">Open Next Popup</button>` : '<p>This is the final popup.</p>'}
             </body>
           </html>
         `);
@@ -76,7 +22,7 @@
   </script>
 </head>
 <body>
-  <h1>Chained Popups for Automation Testing</h1>
+  <h1>Chained Popups</h1>
   <button onclick="openPopup(1)">Start Popup Chain</button>
 </body>
 </html>
