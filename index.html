@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Multi-Window Example</title>
+  <title>Chained Popups</title>
+  <script>
+    function openPopup(step) {
+      const nextStep = step + 1;
+
+      const popup = window.open(
+        '',
+        `popup${step}`,
+        'width=400,height=300,top=100,left=100'
+      );
+
+      if (popup) {
+        popup.document.write(`
+          <html>
+            <head><title>Popup ${step}</title></head>
+            <body>
+              <h2>This is Popup Window ${step}</h2>
+              ${
+                step < 6
+                  ? `<button onclick="window.opener.openPopup(${nextStep})">Open Popup ${nextStep}</button>`
+                  : '<p>This is the final popup.</p>'
+              }
+            </body>
+          </html>
+        `);
+        popup.document.close();
+      } else {
+        alert(`Popup ${step} was blocked by the browser.`);
+      }
+    }
+  </script>
 </head>
 <body>
-    <h1>Multi-Window Functionality Test</h1>
-    <button id="openWindowButton">Open New Window</button>
-
-    <script>
-        document.getElementById('openWindowButton').addEventListener('click', () => {
-            const newWindow = window.open('https://example.com', 'NewWindow', 'width=800,height=600');
-            
-            // Ensure new window is fully loaded
-            newWindow.onload = () => {
-                console.log('New window loaded:', newWindow.location.href);
-
-                // Adding event listener for requests in the new window
-                newWindow.addEventListener('load', () => {
-                    // Simulate handling requests
-                    console.log('Handling requests in the new window.');
-                });
-            };
-
-            // Adding event listener for requests in the original window
-            window.addEventListener('load', () => {
-                // Simulate handling requests
-                console.log('Handling requests in the original window.');
-            });
-        });
-    </script>
+  <h1>Chained Popups for Automation Testing</h1>
+  <button onclick="openPopup(1)">Start Popup Chain</button>
 </body>
 </html>
