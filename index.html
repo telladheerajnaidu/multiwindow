@@ -5,12 +5,7 @@
   <script>
     function openPopup(step) {
       const nextStep = step + 1;
-
-      const popup = window.open(
-        '',
-        `popup${step}`,
-        'width=400,height=300,top=100,left=100'
-      );
+      const popup = window.open('', `popup${step}`, 'width=400,height=300,top=100,left=100');
 
       if (popup) {
         popup.document.write(`
@@ -20,15 +15,38 @@
               <h2>This is Popup Window ${step}</h2>
               ${
                 step < 6
-                  ? `<button onclick="window.opener.openPopup(${nextStep})">Open Popup ${nextStep}</button>`
+                  ? `<button id="popupButton">Open Popup</button>
+                     <script>
+                       function openPopup(step) {
+                         const nextStep = step + 1;
+                         const popup = window.open('', 'popup' + nextStep, 'width=400,height=300,top=100,left=100');
+                         if (popup) {
+                           popup.document.write(\`
+                             <html>
+                               <head><title>Popup \${nextStep}</title></head>
+                               <body>
+                                 <h2>This is Popup Window \${nextStep}</h2>
+                                 \${nextStep < 6 
+                                    ? '<button id="popupButton">Open Popup</button>' 
+                                    : '<p>This is the final popup.</p>'}
+                                 <script>\${openPopup.toString()}</script>
+                                 <script>
+                                   const btn = document.getElementById('popupButton');
+                                   if (btn) btn.onclick = () => openPopup(\${nextStep});
+                                 </script>
+                               </body>
+                             </html>\`);
+                           popup.document.close();
+                         }
+                       }
+                       document.getElementById('popupButton').onclick = () => openPopup(${step});
+                     <\/script>`
                   : '<p>This is the final popup.</p>'
               }
             </body>
           </html>
         `);
         popup.document.close();
-      } else {
-        alert(`Popup ${step} was blocked by the browser.`);
       }
     }
   </script>
